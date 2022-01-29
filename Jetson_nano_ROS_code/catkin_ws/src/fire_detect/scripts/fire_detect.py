@@ -15,22 +15,22 @@ from sensor_msgs.msg import CompressedImage
 class Fire_detect(object):
     def __init__(self):
         self.cvBridge = CvBridge()
-        self.sub_left_camera = rospy.Subscriber('/csi_cam/image_raw', Image, self.camera_callback, queue_size = 1)
+        self.sub_left_camera = rospy.Subscriber('csi_cam/image_raw', Image, self.camera_callback, queue_size = 1)
         self.image_pub = rospy.Publisher("fire_detect_image/compressed",CompressedImage,queue_size=1)
 
     # ROS Image's topic callback function
     def camera_callback(self, image_msg): 
         try:
-            frame = self.cvBridge.imgmsg_to_cv2(image_msg, "rgb8")
+            frame = self.cvBridge.imgmsg_to_cv2(image_msg, "bgr8")
         except CvBridgeError as e:
                 print(e)
-        cv2.imshow("cv_imcode_image",frame)
+        # cv2.imshow("cv_imcode_image",frame)
 
-        blur = cv2.GaussianBlur(frame, (21, 21), 0)
-        hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
+        red = cv2.GaussianBlur(frame, (21, 21), 0)
+        hsv = cv2.cvtColor(red, cv2.COLOR_BGR2HSV)
  
-        lower = [0, 0, 208]
-        upper = [179, 255, 255]
+        lower = [0, 43, 46]
+        upper = [10, 255, 255]
         lower = np.array(lower, dtype="uint8")
         upper = np.array(upper, dtype="uint8")
         mask = cv2.inRange(hsv, lower, upper)
@@ -38,13 +38,13 @@ class Fire_detect(object):
         output = cv2.bitwise_and(frame, hsv, mask=mask)
         no_red = cv2.countNonZero(mask)
         
-        if int(no_red) > 1500:
+        if int(no_red) > 40000:
             text = "Fire Detect"
             cv2.putText(frame, text, (100, 100), cv2.FONT_HERSHEY_COMPLEX, 2.0, (0, 0, 255), 5)
-            cv2.imshow("output", frame)
+            # cv2.imshow("output", frame)
         else:
             cv2.putText(frame, "No Fire", (200, 100), cv2.FONT_HERSHEY_COMPLEX, 2.0, (0, 255, 0), 5)
-            cv2.imshow("output", frame)
+            # cv2.imshow("output", frame)
         print(int(no_red))
 
         #Publish detected line image 

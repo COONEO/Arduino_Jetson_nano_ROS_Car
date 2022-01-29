@@ -1,0 +1,4 @@
+<launch>
+  <node pkg ="fire_detect" name="Jetson_nano_csi_camera_node" type="Jetson_nano_csi_camera_node"/> <!--  output="screen" -->
+
+</launch>

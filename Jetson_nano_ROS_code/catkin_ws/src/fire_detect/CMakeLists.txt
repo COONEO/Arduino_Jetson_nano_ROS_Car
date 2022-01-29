@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
 
 find_package(OpenCV REQUIRED)
 include_directories(include ${OpenCV_INCLUDE_DIRS})
@@ -125,6 +126,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+include_directories(${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
+
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/fire_detect.cpp
@@ -139,6 +142,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}_node src/fire_detect_node.cpp)
+ add_executable(Jetson_nano_csi_camera_node src/Jetson_nano_csi_camera_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -154,6 +158,9 @@ include_directories(
  target_link_libraries(${PROJECT_NAME}_node
    ${catkin_LIBRARIES} ${OpenCV_LIBS}
  )
+
+ target_link_libraries(Jetson_nano_csi_camera_node  ${OpenCV_LIBS})
+ target_link_libraries(Jetson_nano_csi_camera_node  ${catkin_LIBRARIES})
  
 #############
 ## Install ##

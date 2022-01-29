@@ -44,6 +44,19 @@ For more details,please see the Document in our Wechat ID COONEO :
 
 
 
+· 启动小车：
+
+```bash
+cd catkin_ws
+catkin_make -j
+source devel/setup.bash 
+roslaunch ros_arduino_python arduino.launch
+```
+
+· 然后使用 rqt_robot_steering 尝试控制小车
+
+![](pictures/rqt_robot_steering.png)
+
 
 
 ## chapter 2: Configure JY901 IMU
@@ -53,8 +66,6 @@ For more details,please see the Document in our Wechat ID COONEO :
 ![](pictures/imu_901.jpg)
 
 设置完毕后，将模块接入到 Jetson nano 的USB端口上即可（ps: 记得结合自己的安装位置修改imu_901.launch 中的 静态 tf 后面的参数）
-
-
 
 
 
@@ -80,19 +91,18 @@ ssh cooneo_nvi@10.42.1.1
 # 打开Jetson nano 中的终端 或者 ssh 进Jetson
 cd catkin_ws
 catkin_make -j
-source devel/setup.bash
-roslaunch launch_file
+source devel/setup.bash 
 roslaunch launch_file gmapping_ekf.launch 
 ```
 
 
 
-**·** 然后打开我们配套虚拟机中的程序：
+**· 然后打开我们配套虚拟机中的程序：**
 
 ```bash
 # 打开虚拟机中的一个终端 
 cd catkin_ws
-source devel/setup.bashrc
+source devel/setup.bash 
 roslaunch remote_gmapping joy_gmapping.launch
 ```
 
@@ -100,7 +110,7 @@ roslaunch remote_gmapping joy_gmapping.launch
 
 
 
-**·** 保存地图
+**· 保存地图**
 
 ```bash
 # 打开Jetson nano 中的终端 或者 ssh 进Jetson
@@ -112,23 +122,25 @@ rosrun map_server map_saver -f map
 
 
 
-**·** 运行导航节点
+## chapter 4: navigation_ekf 
+
+**· 运行导航节点**
 
 ```bash
 # 打开Jetson nano 中的终端 或者 ssh 进Jetson
 cd catkin_ws
-source devel/setup.bash
+source devel/setup.bash 
 roslaunch launch_file navigation_ekf.launch
 ```
 
 
 
-**·** 打开虚拟机中配套的程序
+**· 打开虚拟机中配套的程序**
 
 ```bash
 # 打开虚拟机中的一个终端
 cd catkin_ws
-source devel/setup.bashrc
+source devel/setup.bash 
 roslaunch remote_gmapping joy_navigation.launch
 ```
 
@@ -136,9 +148,91 @@ roslaunch remote_gmapping joy_navigation.launch
 
 
 
+## chapter 5 : camera applications
+
+**· 打开Jetson-nano 的CSI 摄像头**
+
+```bash
+cd catkin_ws
+source devel/setup.bash 
+roslaunch fire_detect Jetson_nano_csi_camera_node.launch
+```
+
+![](pictures/csi_camera.png)
+
+
+
+**· 打开火焰检测节点**
+
+```bash
+cd catkin_ws
+source devel/setup.bash 
+roslaunch fire_detect fire_detect.launch
+```
+
+![](pictures/1623763976919.png)
+
+这里的火焰识别主要是基于颜色实现的 demo 级别功能，你可能需要根据你的 火苗大小动态修改代码中的值：
+
+```python
+
+        lower = [0, 43, 46]
+        upper = [10, 255, 255]
+        lower = np.array(lower, dtype="uint8")
+        upper = np.array(upper, dtype="uint8")
+        mask = cv2.inRange(hsv, lower, upper)
+ 
+        output = cv2.bitwise_and(frame, hsv, mask=mask)
+        no_red = cv2.countNonZero(mask)
+        #修改这个判别值
+        if int(no_red) > 40000:
+            text = "Fire Detect"
+            cv2.putText(frame, text, (100, 100), cv2.FONT_HERSHEY_COMPLEX, 2.0, (0, 0, 255), 5)
+            # cv2.imshow("output", frame)
+        else:
+            cv2.putText(frame, "No Fire", (200, 100), cv2.FONT_HERSHEY_COMPLEX, 2.0, (0, 255, 0), 5)
+            # cv2.imshow("output", frame)
+        print(int(no_red))
+
+```
+
+
+
+**· 打开摄像头寻迹节点**
+
+![](pictures/巡线2.png)
+
+```
+cd catkin_ws
+source devel/setup.bash 
+roslaunch linetrack linetrack_red.launch
+```
+
+![](pictures/linetrack.gif)
+
+
+
+这也是根据颜色来寻迹的，所以你需要根据你的巡线颜色修改 对应的HSV 颜色空间的范围。
+
+```python
+
+        '''
+        # If your line color changes, it's not a red color,you need to change the HSV[min,max] value in np.array[ , , ]
+        '''
+        # 修改 对应的巡线颜色 HSV 范围
+        lower_red = np.array([35,43,46])
+        upper_red = np.array([77,255,255])
+        #Threshold the HSV image to get only yellow colors
+        mask = cv2.inRange(hsv,lower_red,upper_red)
+        #cv2.imshow("MASK",mask)
+        no_red = cv2.countNonZero(mask)
+```
+
+
+
 **温馨提示**：我们这个过程视频 也放在 COONEO Bilibili 账号中了，欢迎观看。
 
-
+详细的过程解读，请参见我们的微信公众号: "COONEO"。
 
 
 

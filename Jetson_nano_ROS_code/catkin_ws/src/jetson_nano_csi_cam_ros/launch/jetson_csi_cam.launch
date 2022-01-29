@@ -5,9 +5,9 @@
   <arg name="cam_name" default="csi_cam_$(arg sensor_id)" /> <!-- The name of the camera (corrsponding to the camera info) -->
   <arg name="frame_id" default="/$(arg cam_name)_link" />    <!-- The TF frame ID. -->
   <arg name="sync_sink" default="true" />                    <!-- Synchronize the app sink. Setting this to false may resolve problems with sub-par framerates. -->
-  <arg name="width" default="640" />                         <!-- Image Width to stream -->
-  <arg name="height" default="480" />                        <!-- Image Height to stream -->
-  <arg name="fps" default="20" />                            <!-- Desired framerate. True framerate may not reach this if set too high. -->
+  <arg name="width" default="1280" />                         <!-- Image Width to stream -->
+  <arg name="height" default="720" />                        <!-- Image Height to stream -->
+  <arg name="fps" default="120" />                            <!-- Desired framerate. True framerate may not reach this if set too high. -->
   <arg name="flip_method" default="0" />                     <!-- flip_method -->
   <arg name="load_camera_info" default="true" />             <!-- Load the camera info or not-->
 
@@ -19,7 +19,7 @@
 
   <!-- Define the camera calibration parameter -->
   <param name="$(arg cam_name)/camera_info_url" type="string" if="$(arg load_camera_info)"
-    value="package://jetson_nano_csi_cam/config/sainsmart-imx219-jetson-nano-160deg-fov-$(arg cam_name).yaml" />
+    value="package://jetson_nano_csi_cam/config/Raspberry_Pi_V2.yaml" />
 
   <!-- Define the GSCAM pipeline -->
   <param name="$(arg cam_name)/gscam_config" type="string" value="nvarguscamerasrc sensor-id=$(arg sensor_id) ! video/x-raw(memory:NVMM),
@@ -27,7 +27,7 @@
     nvvidconv flip-method=$(arg flip_method) ! videoconvert" />
 
   <!-- Start the GSCAM node -->
-  <node pkg="gscam" type="gscam" name="$(arg cam_name)">
+  <node pkg="gscam" type="gscam" name="$(arg cam_name)" output="screen">
     <param name="camera_name" value="$(arg cam_name)" />
     <param name="frame_id" value="$(arg frame_id)" />
     <param name="sync_sink" value="$(arg sync_sink)" />

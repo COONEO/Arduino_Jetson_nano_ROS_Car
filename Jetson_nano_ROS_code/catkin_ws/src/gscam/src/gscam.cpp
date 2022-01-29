@@ -66,7 +66,7 @@ namespace gscam {
       ROS_INFO_STREAM("Using gstreamer config from env: \""<<gsconfig_env<<"\"");
     } else if(gsconfig_rosparam_defined) {
       gsconfig_ = gsconfig_rosparam;
-      ROS_INFO_STREAM("Using gstreamer config from rosparam: \""<<gsconfig_rosparam<<"\"");
+      ROS_INFO_STREAM("Using gstreamer config from rosparam: \""<<gsconfig_rosparam<<"\"");      // this  step .
     }
 
     // Get additional gscam configuration
@@ -92,7 +92,7 @@ namespace gscam {
 
     if(camera_info_manager_.validateURL(camera_info_url_)) {
       camera_info_manager_.loadCameraInfo(camera_info_url_);
-      ROS_INFO_STREAM("Loaded camera calibration from "<<camera_info_url_);
+      ROS_INFO_STREAM("Loaded camera calibration from "<<camera_info_url_);      // this step .
     } else {
       ROS_WARN_STREAM("Camera info at: "<<camera_info_url_<<" not found. Using an uncalibrated config.");
     }
@@ -132,13 +132,9 @@ namespace gscam {
 #if (GST_VERSION_MAJOR == 1)
     // http://gstreamer.freedesktop.org/data/doc/gstreamer/head/pwg/html/section-types-definitions.html
     if (image_encoding_ == sensor_msgs::image_encodings::RGB8) {
-        caps = gst_caps_new_simple( "video/x-raw", 
-            "format", G_TYPE_STRING, "RGB",
-            NULL); 
+        caps = gst_caps_new_simple( "video/x-raw",  "format", G_TYPE_STRING, "RGB", NULL); 
     } else if (image_encoding_ == sensor_msgs::image_encodings::MONO8) {
-        caps = gst_caps_new_simple( "video/x-raw", 
-            "format", G_TYPE_STRING, "GRAY8",
-            NULL); 
+        caps = gst_caps_new_simple( "video/x-raw",  "format", G_TYPE_STRING, "GRAY8", NULL); 
     } else if (image_encoding_ == "jpeg") {
         caps = gst_caps_new_simple("image/jpeg", NULL, NULL);
     }
@@ -268,6 +264,7 @@ namespace gscam {
       // This should block until a new frame is awake, this way, we'll run at the
       // actual capture framerate of the device.
       // ROS_DEBUG("Getting data...");
+      // ROS_WARN(" into while . ");
 #if (GST_VERSION_MAJOR == 1)
       GstSample* sample = gst_app_sink_pull_sample(GST_APP_SINK(sink_));
       if(!sample) {
@@ -335,16 +332,20 @@ namespace gscam {
       }
       // ROS_INFO("Image time stamp: %.3f",cinfo->header.stamp.toSec());
       cinfo->header.frame_id = frame_id_;
-      if (image_encoding_ == "jpeg") {
+      if (image_encoding_ == "jpeg") 
+      {
           sensor_msgs::CompressedImagePtr img(new sensor_msgs::CompressedImage());
           img->header = cinfo->header;
           img->format = "jpeg";
           img->data.resize(buf_size);
-          std::copy(buf_data, (buf_data)+(buf_size),
-                  img->data.begin());
+          std::copy(buf_data, (buf_data)+(buf_size), img->data.begin());
+
+          ROS_WARN(" into while . ");
           jpeg_pub_.publish(img);
           cinfo_pub_.publish(cinfo);
-      } else {
+      } 
+      else 
+      {
           // Complain if the returned buffer is smaller than we expect
           const unsigned int expected_frame_size =
               image_encoding_ == sensor_msgs::image_encodings::RGB8
@@ -352,9 +353,7 @@ namespace gscam {
               : width_ * height_;
 
           if (buf_size < expected_frame_size) {
-              ROS_WARN_STREAM( "GStreamer image buffer underflow: Expected frame to be "
-                      << expected_frame_size << " bytes but got only "
-                      << (buf_size) << " bytes. (make sure frames are correctly encoded)");
+              ROS_WARN_STREAM( "GStreamer image buffer underflow: Expected frame to be " << expected_frame_size << " bytes but got only "  << (buf_size) << " bytes. (make sure frames are correctly encoded)");
           }
 
           // Construct Image message
@@ -377,11 +376,9 @@ namespace gscam {
           } else {
               img->step = width_;
           }
-          std::copy(
-                  buf_data,
-                  (buf_data)+(buf_size),
-                  img->data.begin());
+          std::copy(buf_data,(buf_data)+(buf_size),img->data.begin());
 
+          // ROS_WARN(" into while . ");
           // Publish the image/info
           camera_pub_.publish(img, cinfo);
       }
@@ -410,8 +407,10 @@ namespace gscam {
     }
   }
 
-  void GSCam::run() {
-    while(ros::ok()) {
+  void GSCam::run() 
+  {
+    while(ros::ok()) 
+    {
       if(!this->configure()) {
         ROS_FATAL("Failed to configure gscam!");
         break;
@@ -429,12 +428,16 @@ namespace gscam {
 
       ROS_INFO("GStreamer stream stopped!");
 
-      if(reopen_on_eof_) {
+      if(reopen_on_eof_) 
+      {
         ROS_INFO("Reopening stream...");
-      } else {
+      } 
+      else 
+      {
         ROS_INFO("Cleaning up stream and exiting...");
         break;
       }
+
     }
 
   }

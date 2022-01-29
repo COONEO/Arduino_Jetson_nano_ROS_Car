@@ -13,16 +13,42 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import CompressedImage
 
-cap = cv2.VideoCapture(0)
+def gstreamer_pipeline(
+    capture_width=1280,
+    capture_height=720,
+    display_width=1280,
+    display_height=720,
+    framerate=60,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc ! "
+        "video/x-raw(memory:NVMM), "
+        "width=(int)%d, height=(int)%d, "
+        "format=(string)NV12, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
 
 def detect_line():
-    rate = rospy.Rate(15)
+    rate = rospy.Rate(60)
+    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     while not rospy.is_shutdown():
         ret, cv_image = cap.read()
         if not ret:  
             rospy.logerr("can not open camera!!!")
             break
-        #cv2.imshow("img",cv_image)
+        # cv2.imshow("img",cv_image)
 
         height, width, channels = cv_image.shape
         descentre = 50
@@ -94,7 +120,7 @@ def detect_line():
 
 if __name__ == '__main__':
     rospy.init_node('linetrack',anonymous=True)
-    cmd_vel_pub = rospy.Publisher('joy_teleop/cmd_vel',Twist,queue_size = 10)
+    cmd_vel_pub = rospy.Publisher('cmd_vel',Twist,queue_size = 10)
     image_pub = rospy.Publisher("line_detect_image/compressed",CompressedImage,queue_size=1)
     cvBridge = CvBridge()
 

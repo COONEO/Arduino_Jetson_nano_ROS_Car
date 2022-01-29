@@ -16,7 +16,7 @@ int redThre ;
 int saturationTh;
 
 static const std::string OPENCV_WINDOW_NAME = "ROS Image window";
-Mat CheckColor( Mat &inImg) ;
+Mat CheckColor( Mat &inImg) ; 
 void DrawFire( Mat &inputImg, Mat foreImg) ;
 
 int main(int argc, char** argv)
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   while(ros::ok())
   {
     cap >> current_frame ;
-    //imshow("current frame",current_frame);
+    imshow("current frame",current_frame);
     CheckColor(current_frame);  
     sensor_msgs::ImagePtr result_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", result_img).toImageMsg();
     image_pub_.publish(result_msg);
