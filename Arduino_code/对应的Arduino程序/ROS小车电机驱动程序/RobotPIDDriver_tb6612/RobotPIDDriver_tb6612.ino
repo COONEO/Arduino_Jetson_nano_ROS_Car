@@ -20,25 +20,30 @@ PIDInfo leftInfo, rightInfo;
 /*****************************  第一步修改 电机外输出轴 转动一圈 所输出的总脉冲数  ************
 
    由于是采用的中断方式捕获电机的霍尔脉冲，并且使用的是边沿触发方式，所以电机的编码值计算方法如下：
-    encoder = （边沿触发）2 x 霍尔编码器相数量（如：2） x 霍尔编码器线束 (如 13 ) x 电机减速比 (如：30)
+    encoder = （边沿触发）2 x 霍尔编码器相数量（如：2） x 霍尔编码器线束 (如 13 ) x 电机减速比 (如：30)/
 
 ************************************************************************************/
-
+double wheeldiameter = 0.064;      //车轮直径 单位 米 (m)
 //double encoderresolution = 2496.0; //编码器输出脉冲数/圈 2*2*13*90 = 2496    TT-motor encoder
+double encoderresolution = 1560.0; //编码器输出脉冲数/圈 2*2*13*30 = 1560    37-motor encoder
+
 //double encoderresolution = 4680.0; //编码器输出脉冲数/圈 2*2*13*90 = 4680    TT-motor encoder 1:90 金属
-double encoderresolution = 1560.0;   //编码器输出脉冲数/圈 2*2*13*30 = 1560    37-motor encoder
 
 
-/*********************  第四步修改 PID 参数，优化电机的调速性能  *********/
+/*****************************  第四步修改 PID 参数，优化电机的调速性能  *********/
+//PID参数配置
+//double Kp_L = 7.0, Ki_L = 10.0, Kd_L = 0.003;   //2.0 5.0 0.003
+//double Kp_R = 5.0, Ki_R = 10.0, Kd_R = 0.003;   //2.0 5.0 0.003
 
-double Kp_L = 15.0, Ki_L = 30.0, Kd_L = 0.0001;   // 15.0 15.00 0.0001
-double Kp_R = 15.0, Ki_R = 30.0, Kd_R = 0.0001;   // 15.0 15.00 0.0001
-
+double Kp_L = 2.0, Ki_L = 5.0, Kd_L = 0.003;   //2.0 5.0 0.003
+double Kp_R = 2.0, Ki_R = 5.0, Kd_R = 0.003;   //2.0 5.0 0.003
+double Sum_count_L = 0;
+double Sum_count_R = 0;
 
 PID leftPID(&leftInfo.input, &leftInfo.output, &leftInfo.target, Kp_L, Ki_L, Kd_L, DIRECT);
 PID rightPID(&rightInfo.input, &rightInfo.output, &rightInfo.target, Kp_R, Ki_R, Kd_R, DIRECT);
 double pid_rate = 100.0;                    // default is 100 Hz
-double pidinterval = 1000.0 / pid_rate;    // PID每次运算结果的执行时间 ms
+double pidinterval = 1000.0 / pid_rate;    // PID每次运算结果的执行时间
 long nextmotion;
 int  moving;
 
@@ -216,7 +221,7 @@ void loop()
       if (arg == 0) arg = 1;
       else if (arg == 1)
       {
-        argv1[index] = 0;
+        argv1[index] = NULL;
         arg = 2;
         index = 0;
       }
@@ -262,18 +267,16 @@ void loop()
     nextmotion = millis() + pidinterval;  // 1000/100
 
 
-    /*********   PID 调试时使用 正常使用应注释掉 ***********/
-    /*********   格式严格 “:” 与“,”不可以注释掉 ***********/
-    
-//    Serial.print("Left_Encoder_value: ");
-//    Serial.print(leftInfo.input);
-//    Serial.print(",");
-//    Serial.print("Target_encoder: ");
-//    Serial.println(leftInfo.target);
-        
-    /******** PID 参数调试完毕后 应注释掉上述代码*********/
+    /*********   PID 测试使用 正常使用应注释掉***********/
+    //    Sum_count_L += leftInfo.output;
+    //    Sum_count_R += rightInfo.output;
+    //     Serial.print(Sum_count_L);
+    //     Serial.print("  ");
+    //     Serial.println(Sum_count_R);
+    //     Serial.print(leftInfo.output);
+    //     Serial.print("  ");
+    //     Serial.println(rightInfo.output);
     /************************************************/
-  
   }
 
   // LED 闪烁 计数器
@@ -305,11 +308,10 @@ void loop()
   }
 
   //自动超时停止保护
-  // if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL)
-  // {
-    // setTargetTicksPerFrame(0, 0);
-  // }
-  
+  if ((millis() - lastMotorCommand) > AUTO_STOP_INTERVAL)
+  {
+    setTargetTicksPerFrame(0, 0);
+  }
 }
 
 void setTargetTicksPerFrame(int left, int right)
