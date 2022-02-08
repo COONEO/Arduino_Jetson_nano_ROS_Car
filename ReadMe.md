@@ -26,9 +26,15 @@ For more details,please see the Document in our Wechat ID COONEO :
 
 ![](pictures/run_ros_motor.jpeg)
 
+调节霍尔编码电机的速度PID参数方法，则参照微信公众号推文《开源！手把手教你如何调节Arduino编码电机速度PID》：
+
+![](pictures/Arduino_PID.jpg)
+
+
+
 ### Step Two: FLASH OS and LAUNCH ROS NODE
 
-1. 请进微信群获取 我们二次制作的Jetson-nano镜像（ 在英伟达官方的基础上 安装了ROS 环境 以及一些 常用软件 ）；
+1. 由于我们二次制作的Jetson-nano镜像（ 在英伟达官方的基础上 安装了ROS 环境 以及一些 常用软件 ）较大，您要是没有购买内存卡的又想节约时间的话，建议购买我们的内存卡服务哟，将为您安装好镜像；
 
 2. 将 Jetson_nano_ROS_code 文件夹中的 工作空间移动至你新烧录的镜像中，需要自行检查的配置有两点：
 
