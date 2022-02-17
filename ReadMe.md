@@ -32,6 +32,16 @@ For more details,please see the Document in our Wechat ID COONEO :
 
 
 
+如果你使用的是Arduino 大功率电机及驱动器扩展板，那么烧录的程序就应该在该目录下：
+
+```bash
+Arduino_code/对应的Arduino程序/ROS小车电机驱动程序/Arduino_mega_2560大功率电机扩展板_code
+```
+
+具体的步骤，该文件夹中有图片提示。
+
+
+
 ### Step Two: FLASH OS and LAUNCH ROS NODE
 
 1. 由于我们二次制作的Jetson-nano镜像（ 在英伟达官方的基础上 安装了ROS 环境 以及一些 常用软件 ）较大，您要是没有购买内存卡的又想节约时间的话，建议购买我们的内存卡服务哟，将为您安装好镜像；
