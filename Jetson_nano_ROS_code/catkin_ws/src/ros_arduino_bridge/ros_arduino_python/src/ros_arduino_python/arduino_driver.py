@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+""" 
     A Python driver for the Arduino microcontroller running the
     ROSArduinoBridge firmware.
 
@@ -273,6 +273,11 @@ class Arduino:
             if self.motors_reversed:
                 values[0], values[1] = -values[0], -values[1]
             return values
+            
+    # add the ultra sensor range data. 
+    def get_ultra_range_m(self):
+        range_cm = self.execute('g')
+        return range_cm / 100.0  # m
 
     def reset_encoders(self):
         ''' Reset the encoder counts to 0
