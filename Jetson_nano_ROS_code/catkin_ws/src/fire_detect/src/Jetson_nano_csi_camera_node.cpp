@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     int capture_height = 720 ;
     int display_width = 1280 ;
     int display_height = 720 ;
-    int frameate = 30 ;
+    int frameate = 60 ;
     int flip_method = 0 ;	
  
     ros::init(argc, argv, "Jetson_nano_csi_camera_node");

@@ -221,7 +221,7 @@ roslaunch fire_detect fire_detect.launch
 ```
 cd catkin_ws
 source devel/setup.bash 
-roslaunch linetrack linetrack_red.launch
+roslaunch linetrack linetrack_yellow.launch
 ```
 
 ![](pictures/linetrack.gif)
