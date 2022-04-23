@@ -6,7 +6,17 @@
 
 ## chapter 1: Construction A ROS Car
 
+·  (Tb6612 -Arduino mega 2560 version)
+
 ![](pictures/扩展板.jpg)
+
+· （ 4950T Arduino mega 2560 ）
+
+![](pictures/A4950T_v1.1.jpg)
+
+
+
+
 
 Download codes from Git:
 
@@ -72,6 +82,20 @@ roslaunch ros_arduino_python arduino.launch
 · 然后使用 rqt_robot_steering 尝试控制小车
 
 ![](pictures/rqt_robot_steering.png)
+
+
+
+相关 “ COONEO ” 微信推文：
+
+![](pictures/imge13.jpg)
+
+
+
+![](pictures/image12.jpg)
+
+
+
+![](/home/lee/Arduino_Jetson_nano_ROS_Car/pictures/image11.jpg)
 
 
 
@@ -224,7 +248,7 @@ source devel/setup.bash
 roslaunch linetrack linetrack_yellow.launch
 ```
 
-![](pictures/linetrack.gif)
+![](pictures/linetrack_yellow.gif)
 
 
 
@@ -270,3 +294,4 @@ For more details,you can search "COONEO" in your WeChat.
 
 or search "COONEO" in Bilibili.
 
+![](pictures/bilibili.jpg)
