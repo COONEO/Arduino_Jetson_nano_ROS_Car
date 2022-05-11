@@ -75,7 +75,9 @@ Arduino_code/对应的Arduino程序/ROS小车电机驱动程序/Arduino_mega_256
 ```bash
 cd catkin_ws
 catkin_make -j
-source devel/setup.bash 
+source devel/setup.bash
+sudo chmod a+x Arduino_Jetson_nano_ROS_car/Jetson_nano_ROS_Node/catkin_ws/src/ros_arduino_bridge/ros_arduino_python/src/ros_arduino_python/*
+sudo chmod a+X Arduino_Jetson_nano_ROS_car/Jetson_nano_ROS_Node/catkin_ws/src/ros_arduino_bridge/ros_arduino_python/nodes/arduino_node.py
 roslaunch ros_arduino_python arduino.launch
 ```
 
@@ -276,7 +278,7 @@ roslaunch linetrack linetrack_yellow.launch
 
 
 
- 2022.01.27
+ 2022.05.11
 
  author:ZhaoXiang Lee
 
